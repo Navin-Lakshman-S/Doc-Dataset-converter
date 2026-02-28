@@ -1,144 +1,144 @@
-# 🤖 AI Data Conversion Tool
+# Document to Dataset Converter
 
-> **Transform Any Document into AI-Ready Datasets**
-
-A powerful, universal file-to-dataset converter that transforms unstructured documents (PDF, Word, Excel, TXT) into clean, structured data optimized for AI model training.
-
-![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
-![License](https://img.shields.io/badge/License-MIT-green.svg)
-![Gradio](https://img.shields.io/badge/UI-Gradio-orange.svg)
+Converts PDFs, Word docs, Excel sheets, text files, and CSVs into structured data (JSON, CSV, XML) you can use for AI training or analysis. Also has a chatbot so you can ask questions about your converted data.
 
 ---
 
-## 📋 Table of Contents
+## Why I built this
 
-- [Overview](#overview)
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
-- [Technical Details](#technical-details)
-- [Use Cases](#use-cases)
-- [Screenshots](#screenshots)
-- [Contributing](#contributing)
+Getting data out of documents manually is painful. You open a PDF, copy text, paste it somewhere, clean it up, repeat. If you have 50 files to process, that's hours of work. This tool does all of that in a few seconds.
 
 ---
 
-## 🎯 Overview
+## What it supports
 
-In the world of AI, **"Garbage In, Garbage Out"** is a fundamental principle. The biggest challenge for AI developers isn't building the model—it's getting data into a format the AI can actually understand.
+**Input formats:** PDF, DOCX, XLSX, XLS, TXT, CSV
 
-This project solves that problem by acting as a **Universal Translator for Data**. It takes messy, human-readable files (like PDFs, Word documents, or Excel sheets) and transforms them into **Machine-Ready formats** (JSON, CSV, XML) with intelligent cleaning and structuring.
+**Output formats:** JSON, CSV, XML, AI Training Format
 
-### The Problem We Solve
-
-- ❌ Manual data extraction from documents is time-consuming
-- ❌ Inconsistent data formats across different file types
-- ❌ Noise in documents (headers, footers, formatting) confuses AI
-- ❌ No standardized pipeline for document-to-dataset conversion
-
-### Our Solution
-
-- ✅ **Automated extraction** from multiple file formats
-- ✅ **Intelligent cleaning** to remove noise and artifacts
-- ✅ **Standardized output** in AI-friendly formats
-- ✅ **Batch processing** for handling multiple files
-- ✅ **80% reduction** in data preparation time
+**Other stuff:**
+- Extracts tables from PDFs and Word docs automatically
+- Cleans up junk like page numbers, headers, extra whitespace
+- Batch processing (upload multiple files, get a ZIP back)
+- Preview your data before downloading
+- Chat with your converted data using Groq AI
 
 ---
 
-## 🚀 Features
+## Setup
 
-### Core Capabilities
-
-- 📄 **Multi-Format Support**
-  - PDF documents (with table extraction)
-  - Word documents (DOCX)
-  - Excel spreadsheets (XLSX, XLS)
-  - Text files (TXT, CSV)
-
-- 🧹 **Advanced Data Cleaning**
-  - Remove URLs and email addresses
-  - Eliminate extra whitespace
-  - Filter headers, footers, and page numbers
-  - Text normalization (lowercase, special chars)
-
-- 📊 **Multiple Output Formats**
-  - **JSON**: Universal structured format
-  - **CSV**: Tabular data for spreadsheets
-  - **XML**: Hierarchical data format
-  - **AI Training Format**: Optimized for ML frameworks
-
-- 🔄 **Batch Processing**
-  - Process multiple files simultaneously
-  - Bulk download as ZIP archive
-  - Progress tracking and error handling
-
-- 📈 **Statistics & Metadata**
-  - Document statistics (word count, page count, etc.)
-  - Metadata extraction (author, creation date, etc.)
-  - Data quality metrics
-
-- 🖥️ **User-Friendly Interface**
-  - Clean, minimalistic Gradio UI
-  - Real-time preview of extracted data
-  - Instant download of converted files
-
----
-
-## 📦 Installation
-
-### Prerequisites
-
-- Python 3.8 or higher
-- pip package manager
-
-### Step 1: Clone the Repository
+You need Python 3.8+ installed.
 
 ```bash
-git clone https://github.com/yourusername/ai-data-conversion-tool.git
-cd ai-data-conversion-tool
-```
+# clone the repo
+git clone <your-repo-url>
+cd kavproj1
 
-### Step 2: Install Dependencies
+# create a virtual environment
+python3 -m venv venv
+source venv/bin/activate
 
-```bash
+# install dependencies
 pip install -r requirements.txt
-```
 
-### Step 3: Run the Application
-
-```bash
+# run it
 python app.py
 ```
 
-The application will start on `http://localhost:7860`
+Opens at `http://localhost:7860`
+
+If you want to use the chatbot feature, add your Groq API key to a `.env` file:
+```
+GROQ_API_KEY=your_key_here
+```
 
 ---
 
-## 🎮 Usage
+## How to use
 
-### Single File Conversion
+### Single file
+1. Go to "Single File Converter" tab
+2. Upload your file
+3. Pick an output format
+4. Click "Convert to Dataset"
+5. Download the result
 
-1. **Upload** your document (PDF, DOCX, XLSX, TXT, CSV)
-2. **Select** output format (JSON, CSV, XML, AI Training Format)
-3. **Configure** cleaning options (optional)
-4. **Click** "Convert to Dataset"
-5. **Download** your converted file
+### Batch processing
+1. Go to "Batch Converter" tab
+2. Upload multiple files
+3. Same deal — pick format, click process
+4. Download the ZIP
 
-### Batch Processing
+### Chatbot
+1. Convert a file first
+2. Go to "Chat with Data" tab
+3. Ask questions like "what's the total?" or "summarize this"
 
-1. **Upload** multiple files
-2. **Select** output format
-3. **Configure** cleaning options
-4. **Click** "Process Batch"
-5. **Download** ZIP file with all converted files
+---
 
-### Example: Converting a PDF Invoice
+## Project structure
 
-**Input**: `invoice_2024.pdf`
+```
+kavproj1/
+├── app.py                  # main app (Gradio UI + logic)
+├── chatbot.py              # chatbot using Groq API
+├── requirements.txt        # dependencies
+├── .env                    # API key (not committed)
+│
+├── converters/             # one converter per file type
+│   ├── base_converter.py   # abstract base class
+│   ├── pdf_converter.py    # PDF extraction (PyMuPDF + pdfplumber)
+│   ├── word_converter.py   # DOCX extraction (python-docx)
+│   ├── excel_converter.py  # Excel extraction (pandas)
+│   └── text_converter.py   # TXT/CSV extraction
+│
+├── utils/                  # helper modules
+│   ├── cleaner.py          # text cleaning (regex-based)
+│   ├── formatter.py        # output formatting (JSON/CSV/XML)
+│   └── validator.py        # file validation (type, size)
+│
+├── test_data/              # sample files for testing
+└── output/                 # where converted files go
+```
 
-**Output (JSON)**:
+---
+
+## Tech stack
+
+| What | Library | Why |
+|------|---------|-----|
+| Language | Python 3.8+ | Main language |
+| UI | Gradio | Quick web interface |
+| PDF parsing | PyMuPDF, pdfplumber | Text + table extraction |
+| Word parsing | python-docx | DOCX files |
+| Excel parsing | pandas, openpyxl | Spreadsheets |
+| Text cleaning | regex | Pattern matching |
+| Chatbot | Groq API (llama-3.3-70b) | Querying converted data |
+| Encoding detection | chardet | Handle different encodings |
+
+---
+
+## How it works internally
+
+```
+Upload file → Validate (type, size) → Extract content → Clean text → Format output → Save file
+```
+
+1. **Validation** — checks if the file type is supported and under 50MB
+2. **Extraction** — picks the right converter based on file extension, pulls out text + tables + metadata
+3. **Cleaning** — optional step, removes URLs, extra spaces, page numbers, etc.
+4. **Formatting** — converts the extracted data into your chosen format
+5. **Output** — saves the file and shows a preview
+
+The converters all inherit from `BaseConverter`, which defines the interface (`extract()` and `get_metadata()`). Each file type has its own implementation.
+
+---
+
+## Example output
+
+**Input:** A PDF invoice
+
+**JSON output:**
 ```json
 {
   "document_type": "PDF",
@@ -151,8 +151,7 @@ The application will start on `http://localhost:7860`
       "columns": 4,
       "data": [
         ["Item", "Quantity", "Price", "Total"],
-        ["Cloud Storage", "1", "50.00", "50.00"],
-        ["API Access", "1", "100.00", "100.00"]
+        ["Cloud Storage", "1", "50.00", "50.00"]
       ]
     }
   ],
@@ -165,204 +164,16 @@ The application will start on `http://localhost:7860`
 
 ---
 
-## 📁 Project Structure
+## Limitations
 
-```
-kavproj1/
-├── app.py                      # Main Gradio application
-├── requirements.txt            # Python dependencies
-├── README.md                   # Project documentation
-│
-├── converters/                 # File converter modules
-│   ├── __init__.py
-│   ├── base_converter.py      # Abstract base class
-│   ├── pdf_converter.py       # PDF extraction
-│   ├── word_converter.py      # Word document extraction
-│   ├── excel_converter.py     # Excel spreadsheet extraction
-│   └── text_converter.py      # Text/CSV extraction
-│
-├── utils/                      # Utility modules
-│   ├── __init__.py
-│   ├── cleaner.py             # Data cleaning functions
-│   ├── formatter.py           # Output formatting
-│   └── validator.py           # File validation
-│
-└── output/                     # Generated output files
-```
+- Password-protected files won't work
+- Max file size is 50MB
+- Complex PDF layouts might not extract perfectly
+- Chatbot context is limited to first 4000 chars of converted data
+- Very large Excel files might be slow
 
 ---
 
-## 🔧 Technical Details
+## License
 
-### Tech Stack
-
-| Component | Technology | Purpose |
-|-----------|-----------|---------|
-| **Language** | Python 3.8+ | Core processing engine |
-| **UI Framework** | Gradio 4.19 | Interactive web interface |
-| **PDF Processing** | PyMuPDF, pdfplumber | Text & table extraction |
-| **Word Processing** | python-docx | DOCX file handling |
-| **Excel Processing** | pandas, openpyxl | Spreadsheet data |
-| **Text Processing** | NLTK, regex | Cleaning & normalization |
-| **Data Formats** | JSON, CSV, XML | Output generation |
-
-### Architecture
-
-The application follows a **modular, object-oriented design**:
-
-1. **Converter Layer**: Specialized converters for each file type
-2. **Utility Layer**: Reusable cleaning, formatting, and validation
-3. **Application Layer**: Gradio UI orchestrating the pipeline
-
-```
-User Upload → Validation → Extraction → Cleaning → Formatting → Output
-```
-
-### Key Algorithms
-
-- **Smart Text Extraction**: Uses multiple libraries for robust extraction
-- **Table Detection**: Automatically identifies and extracts tabular data
-- **Noise Removal**: Regex-based cleaning of headers, footers, artifacts
-- **Format Conversion**: Intelligent structuring based on content type
-
----
-
-## 💼 Use Cases & Domain Applications
-
-### 1. Legal & Finance
-- Convert thousands of PDF contracts into structured data
-- Analyze legal documents for risk assessment
-- Extract financial data from reports and statements
-
-### 2. Healthcare
-- Transform medical records into training datasets
-- Structure patient notes for diagnostic AI
-- Extract data from research papers
-
-### 3. Customer Support
-- Convert chat logs into chatbot training data
-- Structure email conversations for sentiment analysis
-- Build FAQ datasets from documentation
-
-### 4. Academia & Research
-- Convert research papers into literature databases
-- Extract citations and references
-- Build academic knowledge graphs
-
-### 5. Business Intelligence
-- Transform business reports into analyzable data
-- Extract KPIs from presentations and documents
-- Build training data for business AI assistants
-
----
-
-## 📊 Output Format Examples
-
-### JSON (Standard)
-```json
-{
-  "document_type": "PDF",
-  "full_text": "...",
-  "metadata": {...},
-  "tables": [...]
-}
-```
-
-### AI Training Format
-```json
-{
-  "input_text": "Extracted document content...",
-  "metadata": {
-    "document_type": "PDF",
-    "author": "John Doe"
-  },
-  "features": {
-    "word_count": 1500,
-    "has_tables": true
-  },
-  "structured_data": [...]
-}
-```
-
-### CSV (for tabular data)
-```csv
-Item,Quantity,Price,Total
-Cloud Storage,1,50.00,50.00
-API Access,1,100.00,100.00
-```
-
----
-
-## 🎨 Screenshots
-
-### Main Interface
-- Clean, modern Gradio UI
-- Single file and batch processing tabs
-- Real-time preview and statistics
-
-### Features Showcase
-- Document upload with drag-and-drop
-- Configurable cleaning options
-- Instant preview of extracted data
-- One-click download
-
----
-
-## 📝 Project Explanation for Professor
-
-### Abstract
-
-The **Universal File-to-Dataset Converter** is an automated pipeline designed to bridge the gap between unstructured document storage and AI model training. While humans communicate via PDFs, Word docs, and spreadsheets, AI models require structured, cleaned, and standardized data (typically JSON or CSV). This tool automates the extraction, cleaning, and formatting process, reducing data preparation time by up to 80% and ensuring high-quality input for Machine Learning (ML) and Large Language Models (LLMs).
-
-### How It Works (Pipeline)
-
-1. **Ingestion**: User uploads any supported file type
-2. **Validation**: System checks file type, size, and integrity
-3. **Extraction**: Specialized parsers extract text, tables, and metadata
-4. **Cleaning**: Remove noise (headers, footers, URLs, extra spaces)
-5. **Structuring**: Organize data into chosen output format
-6. **Export**: Generate downloadable dataset file
-
-### Innovation points
-
-- **Universal Format Support**: One tool for all common document types
-- **Intelligent Table Extraction**: Preserves structure from PDFs and Excel
-- **Batch Processing**: Handle multiple files efficiently
-- **AI-Optimized Output**: Special format designed for ML training
-
-### Technical Excellence
-
-- Modular, object-oriented architecture
-- Comprehensive error handling
-- Scalable design (easily add new formats)
-- Production-ready code with documentation
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
----
-
-## 👨‍💻 Author
-
-Built with ❤️ for AI researchers, data scientists, and machine learning engineers.
-
----
-
-## 🙏 Acknowledgments
-
-- Gradio team for the amazing UI framework
-- PyMuPDF and pdfplumber for PDF extraction
-- Open source community for excellent libraries
-
----
-
-**⭐ If you find this project useful, please give it a star!**
+MIT

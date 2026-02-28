@@ -10,3 +10,5 @@ nltk
 regex
 python-magic
 chardet
+groq
+python-dotenv

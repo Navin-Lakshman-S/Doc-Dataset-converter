@@ -20,6 +20,9 @@ from utils.cleaner import DataCleaner
 from utils.formatter import DataFormatter
 from utils.validator import FileValidator
 
+# Import chatbot
+from chatbot import DataChatbot
+
 
 class AIDataConverter:
     """Main application class for AI Data Conversion Tool"""
@@ -30,6 +33,8 @@ class AIDataConverter:
         self.cleaner = DataCleaner()
         self.formatter = DataFormatter()
         self.validator = FileValidator()
+        self.chatbot = DataChatbot()
+        self.last_converted_data = None  # Store last converted data for chatbot
     
     def _ensure_output_dir(self):
         """Ensure output directory exists"""
@@ -137,6 +142,26 @@ class AIDataConverter:
                 
                 preview = json_output[:2000] + "..." if len(json_output) > 2000 else json_output
             
+            # Load data into chatbot for querying
+            data_format = output_format.lower().replace(" ", "_")
+            if output_format == "JSON" or output_format == "AI Training Format":
+                self.last_converted_data = json_output
+                self.chatbot.load_data(json_output, data_format)
+            elif output_format == "XML":
+                self.last_converted_data = xml_output
+                self.chatbot.load_data(xml_output, data_format)
+            elif output_format == "CSV" and csv_data:
+                # For CSV, convert back to string for chatbot
+                import io
+                csv_string = io.StringIO()
+                import csv
+                writer = csv.DictWriter(csv_string, fieldnames=csv_data[0].keys() if csv_data else [])
+                writer.writeheader()
+                writer.writerows(csv_data)
+                csv_content = csv_string.getvalue()
+                self.last_converted_data = csv_content
+                self.chatbot.load_data(csv_content, data_format)
+            
             success_msg = f"Successfully processed: {os.path.basename(file_path)}\nOutput saved to: {output_path}"
             
             return success_msg, preview, output_path, stats_text
@@ -220,6 +245,31 @@ class AIDataConverter:
             return summary, zip_path
         
         return summary, None
+    
+    def chat_with_data(self, message: str, history: list) -> Tuple[str, list]:
+        """
+        Handle chat interactions with the converted data
+        
+        Args:
+            message: User's message
+            history: Chat history
+            
+        Returns:
+            Empty string and updated history as list of dicts
+        """
+        if not self.last_converted_data:
+            # No data loaded yet - return a helpful message
+            self.chatbot.chat_history.append(("user", message))
+            self.chatbot.chat_history.append(("assistant", "Please convert a file first using the Single File Converter tab. Once you have converted data, you can ask questions about it here."))
+        else:
+            self.chatbot.get_response(message)
+        
+        return "", self.chatbot.get_chat_history()
+    
+    def clear_chat(self) -> list:
+        """Clear chat history"""
+        self.chatbot.clear_history()
+        return []
 
 
 # Create the Gradio interface
@@ -263,11 +313,7 @@ def create_interface():
     }
     """
     
-    with gr.Blocks(
-        title="AI Data Conversion Tool",
-        theme=gr.themes.Soft(primary_hue="green"),
-        css=custom_css
-    ) as interface:
+    with gr.Blocks(title="AI Data Conversion Tool") as interface:
         
         with gr.Tabs():
             # Landing Page Tab
@@ -584,6 +630,70 @@ def create_interface():
                         batch_lowercase
                     ],
                     outputs=[batch_status, batch_download]
+                )
+            
+            # Chat with Data Tab
+            with gr.Tab("Chat with Data"):
+                gr.Markdown(
+                    """
+                    ### Ask questions about your converted data
+                    
+                    After converting a file in the Single File Converter tab, you can ask questions about the data here.
+                    The chatbot will analyze your converted data and answer your questions.
+                    
+                    **Examples of questions you can ask:**
+                    - "What are the main topics in this document?"
+                    - "Summarize the key findings"
+                    - "How many tables are in the data?"
+                    - "What's the total amount in the invoice?"
+                    - "List all the names mentioned"
+                    """
+                )
+                
+                with gr.Row():
+                    with gr.Column():
+                        chatbot_interface = gr.Chatbot(
+                            label="Data Assistant",
+                            height=500,
+                            show_label=True
+                        )
+                        
+                        with gr.Row():
+                            chat_input = gr.Textbox(
+                                label="Your question",
+                                placeholder="Ask something about your converted data...",
+                                lines=2,
+                                scale=4
+                            )
+                            chat_submit = gr.Button("Send", variant="primary", scale=1)
+                        
+                        with gr.Row():
+                            clear_btn = gr.Button("Clear Chat", variant="secondary")
+                        
+                        gr.Markdown(
+                            """
+                            **Note:** The chatbot uses your converted data as context. 
+                            Make sure to convert a file first in the Single File Converter tab.
+                            """
+                        )
+                
+                # Chat event handlers
+                chat_submit.click(
+                    fn=app.chat_with_data,
+                    inputs=[chat_input, chatbot_interface],
+                    outputs=[chat_input, chatbot_interface]
+                )
+                
+                chat_input.submit(
+                    fn=app.chat_with_data,
+                    inputs=[chat_input, chatbot_interface],
+                    outputs=[chat_input, chatbot_interface]
+                )
+                
+                clear_btn.click(
+                    fn=app.clear_chat,
+                    inputs=[],
+                    outputs=[chatbot_interface]
                 )
             
             # Documentation Tab

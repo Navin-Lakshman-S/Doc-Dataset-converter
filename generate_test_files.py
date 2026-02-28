@@ -16,13 +16,13 @@ import os
 # Create test_data directory
 os.makedirs('test_data', exist_ok=True)
 
-print("🔧 Generating test files for AI Data Conversion Tool...")
+print("Generating test files...")
 print("=" * 60)
 
 # ============================================================================
 # 1. Generate PDF - Sample Invoice
 # ============================================================================
-print("\n📄 Creating PDF file (sample_invoice.pdf)...")
+print("\nCreating PDF file (sample_invoice.pdf)...")
 
 pdf_file = "test_data/sample_invoice.pdf"
 doc = SimpleDocTemplate(pdf_file, pagesize=letter)
@@ -108,12 +108,12 @@ footer_text = "Thank you for your business! Payment is due within 30 days. For q
 elements.append(Paragraph(footer_text, styles['Normal']))
 
 doc.build(elements)
-print("✅ PDF created successfully!")
+print("PDF created.")
 
 # ============================================================================
 # 2. Generate Word Document - Project Report
 # ============================================================================
-print("\n📝 Creating Word document (project_report.docx)...")
+print("\nCreating Word document (project_report.docx)...")
 
 word_file = "test_data/project_report.docx"
 doc = Document()
@@ -197,12 +197,12 @@ doc.add_paragraph(conclusion_text)
 
 # Save document
 doc.save(word_file)
-print("✅ Word document created successfully!")
+print("Word document created.")
 
 # ============================================================================
 # 3. Generate Excel Spreadsheet - Sales Data
 # ============================================================================
-print("\n📊 Creating Excel file (sales_data.xlsx)...")
+print("\nCreating Excel file (sales_data.xlsx)...")
 
 excel_file = "test_data/sales_data.xlsx"
 
@@ -248,12 +248,12 @@ with pd.ExcelWriter(excel_file, engine='openpyxl') as writer:
     df_summary.to_excel(writer, sheet_name='Summary', index=False)
     df_categories.to_excel(writer, sheet_name='Categories', index=False)
 
-print("✅ Excel file created successfully!")
+print("Excel file created.")
 
 # ============================================================================
 # 4. Generate Text File - Meeting Notes
 # ============================================================================
-print("\n📋 Creating text file (meeting_notes.txt)...")
+print("\nCreating text file (meeting_notes.txt)...")
 
 txt_file = "test_data/meeting_notes.txt"
 
@@ -352,12 +352,12 @@ End of Meeting Notes
 with open(txt_file, 'w', encoding='utf-8') as f:
     f.write(txt_content)
 
-print("✅ Text file created successfully!")
+print("Text file created.")
 
 # ============================================================================
 # 5. Generate CSV File - Customer Database
 # ============================================================================
-print("\n📈 Creating CSV file (customer_database.csv)...")
+print("\nCreating CSV file (customer_database.csv)...")
 
 csv_file = "test_data/customer_database.csv"
 
@@ -389,21 +389,19 @@ csv_data = {
 df_csv = pd.DataFrame(csv_data)
 df_csv.to_csv(csv_file, index=False, encoding='utf-8')
 
-print("✅ CSV file created successfully!")
+print("CSV file created.")
 
 # ============================================================================
 # Summary
 # ============================================================================
 print("\n" + "=" * 60)
-print("🎉 TEST FILE GENERATION COMPLETE!")
+print("Done. All test files created.")
 print("=" * 60)
-print("\n📁 Created files in 'test_data/' directory:")
-print("   1. ✅ sample_invoice.pdf - Invoice with tables and text")
-print("   2. ✅ project_report.docx - Document with headings and tables")
-print("   3. ✅ sales_data.xlsx - Multi-sheet Excel workbook")
-print("   4. ✅ meeting_notes.txt - Plain text meeting notes")
-print("   5. ✅ customer_database.csv - CSV customer database")
-print("\n💡 You can now upload these files to test the application!")
-print("   Run: python app.py")
-print("   Then upload files from the test_data/ folder")
-print("\n" + "=" * 60)
+print("\nFiles in test_data/:")
+print("   1. sample_invoice.pdf - Invoice with tables and text")
+print("   2. project_report.docx - Document with headings and tables")
+print("   3. sales_data.xlsx - Multi-sheet Excel workbook")
+print("   4. meeting_notes.txt - Plain text meeting notes")
+print("   5. customer_database.csv - CSV customer database")
+print("\nRun 'python app.py' and upload files from test_data/ to test.")
+print("=" * 60)
