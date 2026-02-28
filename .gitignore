@@ -57,3 +57,4 @@ output/
 
 # Gradio
 gradio_cached_examples/
+.env
