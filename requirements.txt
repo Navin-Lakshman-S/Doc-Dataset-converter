@@ -12,3 +12,4 @@ python-magic
 chardet
 groq
 python-dotenv
+libmagic
