@@ -32,7 +32,7 @@ You need Python 3.8+ installed.
 ```bash
 # clone the repo
 git clone <your-repo-url>
-cd kavproj1
+cd Doc-Dataset-converter
 
 # create a virtual environment
 python3 -m venv venv
@@ -79,7 +79,7 @@ GROQ_API_KEY=your_key_here
 ## Project structure
 
 ```
-kavproj1/
+Doc-Dataset-converter/
 ├── app.py                  # main app (Gradio UI + logic)
 ├── chatbot.py              # chatbot using Groq API
 ├── requirements.txt        # dependencies
